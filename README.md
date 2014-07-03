@@ -25,7 +25,7 @@ writing.
 
 ## Known Issues
 
-* Insucure call to exec
+* Insecure call to exec
 * Addhoc coding style, which needs refactoring
 * Missing tests
 * Missing contributors

@@ -4,7 +4,7 @@ A lightweight ruby front-end for pandoc that allows the usage of ERB-style templ
 
 It is a build tool for the transformation of multimarkdown to
 various formats based on pandoc. The source file could be either a
-standard markdown *(\*.md)* file or a ERB template *(\*.md.rb)*.
+standard markdown *(\*.md)* file or a ERB template *(\*.md.erb)*.
 This tool is meant to be used with custom templates for scientific
 writing.
 
@@ -15,7 +15,7 @@ writing.
     ~~~
 
 ## Version:
- 1.1
+ 1.2
 
 ## Requirements
 

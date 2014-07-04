@@ -1,6 +1,6 @@
 # PanRuby is a build tool for the transformation of multimarkdown to
 # various formats based on pandoc.
-# The source file could be either a standard *.md file and *.md.rb
+# The source file could be either a standard *.md file and *.md.erb
 # containing ERB templates.
 #
 # Usage:
@@ -8,7 +8,7 @@
 #  panruby.rb latex|beamer|html [name] [template]
 #
 # Author: Thomas Kühn
-# Version: 1.1
+# Version: 1.2
 
 
 #!/usr/bin/ruby1.9.1
@@ -56,7 +56,7 @@ end
 def load(file)
 	r=''
   open(file) do|f|
-    if /.*[.]md[.]rb$/ =~ file
+    if /.*[.]md[.]erb$/ =~ file
 	    engine=ERB.new(f.readlines.join,nil,'<>')
 	    r=engine.result(binding)
     else
@@ -67,7 +67,7 @@ def load(file)
 end
 
 
-# Start execution
+# Start of execution
 
 if ARGV.size<3
 	puts " build.rb latex|beamer|html [sourcefile] [template] [bibfile]" 
@@ -125,8 +125,8 @@ if File.exists?(output)
 end
 
 #parse file as erb template
-temp=file
-if /.*[.]md[.]rb$/ =~ file
+input=file
+if /.*[.]md[.]erb$/ =~ file
   temp=name+".tmp"
   open(file) do|f|
     engine=ERB.new(f.readlines.join,nil,'<>')
@@ -136,7 +136,7 @@ if /.*[.]md[.]rb$/ =~ file
   end
 end
 commandstring=String.new(@commandstring)
-commandstring=commandstring % [temp,@extensions,template,output]
+commandstring=commandstring % [input,@extensions,template,output]
 commandstring << " --bibliography=\"%s\" --natbib"%bibfile if File.exists?(bibfile)
 variables=[]
 @keys.each_pair do|k,v|

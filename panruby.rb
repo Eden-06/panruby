@@ -8,7 +8,7 @@
 #  panruby.rb latex|beamer|html [name] [template]
 #
 # Author: Thomas Kühn
-# Version: 1.2
+# Version: 1.2.1
 
 
 #!/usr/bin/ruby1.9.1
@@ -39,12 +39,22 @@ def addkeys(str)
  true
 end
 
+#Depreceted use getkey instead
 def key(value)
  @keys[value]
 end
 
-def key=(value)
+#Depreceted use putkey instead
+def key=(value) 
  @keys[value]=value
+end
+
+def getkey(value)
+ @keys[value]
+end
+
+def putkey(key,value)
+ @keys[key]=value
 end
 
 # Returns the variant of the build, i.e., beamer.
@@ -97,8 +107,8 @@ end
 name=ARGV[1].sub(/[.]\w+$/,"")
 
 file=if ARGV.size==3 then
-       if File.exists?(name+".md.rb")
-         name+".md.rb"
+       if File.exists?(name+".md.erb")
+         name+".md.erb"
        else
          name+".md"
        end
@@ -127,7 +137,8 @@ end
 #parse file as erb template
 input=file
 if /.*[.]md[.]erb$/ =~ file
-  temp=name+".tmp"
+  puts "# process erb #"
+  input=name+".tmp"
   open(file) do|f|
     engine=ERB.new(f.readlines.join,nil,'<>')
     File.open(temp,"w+") do|t|

@@ -17,7 +17,7 @@ require 'erb'
 
 @variant=:latex
 @keys=Hash.new
-@extensions=%w[ yaml_metadata_block grid_tables table_captions ]
+@extensions=%w[ markdown yaml_metadata_block grid_tables table_captions ]
 
 # Returns the set of used pandoc extensions
 def extensions
@@ -90,27 +90,27 @@ end
 # Start of execution
 
 if ARGV.size<3
-	puts " build.rb latex|beamer|html [sourcefile] [template] [bibfile]" 
-	puts " build.rb latex|beamer|html [name] [template]" 
+	puts " panruby.rb latex|beamer|html [sourcefile] [template] [bibfile]" 
+	puts " panruby.rb latex|beamer|html [name] [template]" 
 	exit
 end
 
 case ARGV[0].strip
  when /beamer/i then 
-   @commandstring="pandoc -s -S \"%s\" -f markdown%s -t beamer --slide-level 2 --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s -t beamer --slide-level 2 --template=\"%s\" -o \"%s\""
    @ext=".tex"
    @variant=:beamer
  when /html/i   then 
-   @commandstring="pandoc -s -S \"%s\" -f markdown%s -t html  --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s -t html  --template=\"%s\" -o \"%s\""
    @ext=".html"
    @variant=:html
  when /latex/i  then 
-   @commandstring="pandoc -s -S \"%s\" -f markdown%s -t latex --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s -t latex --template=\"%s\" -o \"%s\""
    @ext=".tex"
    @variant=:latex
  else                
-	puts " build.rb latex|beamer|html [sourcefile] [template] [bibfile]" 
-	puts " build.rb latex|beamer|html [name] [template]" 
+	puts " panruby.rb latex|beamer|html [sourcefile] [template] [bibfile]" 
+	puts " panruby.rb latex|beamer|html [name] [template]" 
 	exit
 end
 

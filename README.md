@@ -10,8 +10,8 @@ writing.
 
 ## Usage:
     ~~~
-    build.rb latex|beamer|html [sourcefile] [template] [bibfile]
-    build.rb latex|beamer|html [name] [template]
+    panruby.rb latex|beamer|html [sourcefile] [template] [bibfile]
+    panruby.rb latex|beamer|html [name] [template]
     ~~~
 
 ## Version:
@@ -22,6 +22,14 @@ writing.
 * Ruby version 1.9.1
 * Document encoding UTF-8
 * ERB
+
+## Application Interface
+
+You can use the following ruby commands within your ERB markdown file:
+
+* **addextension(exts)** adds [pandoc extension](http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown) to pandoc
+* **putkey(key,value)** to set [template variables](http://johnmacfarlane.net/pandoc/README.html#general-writer-options) for pandoc
+* **variant?** can be used to create output w.r.t. to the variant passed to panruby.rb in the commandline
 
 ## Known Issues
 

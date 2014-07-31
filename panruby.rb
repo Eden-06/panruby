@@ -8,7 +8,7 @@
 #  panruby.rb latex|beamer|html [name] [template]
 #
 # Author: Thomas Kühn
-# Version: 1.2.1
+# Version: 1.2.2
 
 
 #!/usr/bin/ruby1.9.1
@@ -17,12 +17,17 @@ require 'erb'
 
 @variant=:latex
 @keys=Hash.new
-@extensions="+yaml_metadata_block+grid_tables+table_captions"
+@extensions=%w[ yaml_metadata_block grid_tables table_captions ]
+
+# Returns the set of used pandoc extensions
+def extensions
+ @extensions
+end
 
 # Adds the list of pandoc extensions
 def addextension(ext)
  e=ext.to_a
- @extensions << "+" << e.join("+") unless e.empty?
+ @extensions.push(*e).uniq! unless e.empty?
 end
 
 # Adds keys from several lines of text.
@@ -39,20 +44,24 @@ def addkeys(str)
  true
 end
 
-#Depreceted use getkey instead
+#Use getkey instead
+# [Depreceted]
 def key(value)
  @keys[value]
 end
 
-#Depreceted use putkey instead
+#Use putkey instead
+# [Depreceted]
 def key=(value) 
  @keys[value]=value
 end
 
+#Returns the value assoziated to a given key or nil, if the key was not yet assigned.
 def getkey(value)
  @keys[value]
 end
 
+#Assign the given value to the given key.
 def putkey(key,value)
  @keys[key]=value
 end
@@ -62,7 +71,8 @@ def variant?
  @variant
 end
 
-# Loads another ERB markdown file into this file.
+# Loads another markdown file into this file.
+# If the file is an ERB file it will be proccessed by the ERB template engine.
 def load(file)
 	r=''
   open(file) do|f|
@@ -147,7 +157,7 @@ if /.*[.]md[.]erb$/ =~ file
   end
 end
 commandstring=String.new(@commandstring)
-commandstring=commandstring % [input,@extensions,template,output]
+commandstring=commandstring % [input,@extensions.join("+"),template,output]
 commandstring << " --bibliography=\"%s\" --natbib"%bibfile if File.exists?(bibfile)
 variables=[]
 @keys.each_pair do|k,v|
@@ -158,4 +168,4 @@ commandstring << (variables.join)
 puts "# generated commandstring #"
 puts commandstring
 
-exec(commandstring)
+exec(commandstring) # inherently insecure

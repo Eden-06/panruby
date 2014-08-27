@@ -97,7 +97,7 @@ end
 
 case ARGV[0].strip
  when /beamer/i then 
-   @commandstring="pandoc -s -S \"%s\" -f %s -t beamer --slide-level 2 --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s -t beamer --slide-level 2 --template=\"%s\" -o \"%s\" --natbib"
    @ext=".tex"
    @variant=:beamer
  when /html/i   then 
@@ -105,7 +105,7 @@ case ARGV[0].strip
    @ext=".html"
    @variant=:html
  when /latex/i  then 
-   @commandstring="pandoc -s -S \"%s\" -f %s -t latex --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s -t latex --template=\"%s\" -o \"%s\" --natbib"
    @ext=".tex"
    @variant=:latex
  else                
@@ -158,7 +158,7 @@ if /.*[.]md[.]erb$/ =~ file
 end
 commandstring=String.new(@commandstring)
 commandstring=commandstring % [input,@extensions.join("+"),template,output]
-commandstring << " --bibliography=\"%s\" --natbib"%bibfile if File.exists?(bibfile)
+commandstring << " --bibliography=\"%s\""%bibfile if File.exists?(bibfile)
 variables=[]
 @keys.each_pair do|k,v|
  variables << " -V %s=\"%s\"" % [k,v]

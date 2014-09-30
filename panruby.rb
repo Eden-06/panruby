@@ -151,7 +151,7 @@ if /.*[.]md[.]erb$/ =~ file
   input=name+".tmp"
   open(file) do|f|
     engine=ERB.new(f.readlines.join,nil,'<>')
-    File.open(temp,"w+") do|t|
+    File.open(input,"w+") do|t|
       t.write(engine.result())
     end
   end

@@ -8,7 +8,7 @@
 #  panruby.rb latex|beamer|html [name] [template]
 #
 # Author: Thomas Kühn
-# Version: 1.2.2
+# Version: 1.2.3
 
 
 #!/usr/bin/ruby1.9.1
@@ -114,7 +114,7 @@ case ARGV[0].strip
 	exit
 end
 
-name=ARGV[1].sub(/[.]\w+$/,"")
+name=ARGV[1].sub(/[.]\w+([.]erb)?$/,"")
 
 file=if ARGV.size==3 then
        if File.exists?(name+".md.erb")

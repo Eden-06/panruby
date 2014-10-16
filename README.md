@@ -34,6 +34,6 @@ You can use the following ruby commands within your ERB markdown file:
 ## Known Issues
 
 * Insecure call to exec
-* Addhoc coding style, which needs refactoring
+* Adhoc coding style, which needs refactoring
 * Missing tests
 * Missing contributors

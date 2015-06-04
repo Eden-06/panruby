@@ -18,6 +18,8 @@ require 'erb'
 @variant=:latex
 @keys=Hash.new
 @extensions=%w[ markdown yaml_metadata_block grid_tables table_captions ]
+@store=Hash.new
+
 
 # Returns the set of used pandoc extensions
 def extensions
@@ -28,6 +30,23 @@ end
 def addextension(ext)
  e=ext.to_a
  @extensions.push(*e).uniq! unless e.empty?
+end
+
+# Key-value store to safely pass around key value pairs
+
+# Puts a new value for the given key (may overriding the previous key)
+def put(k,v)
+ @store[k.freeze]=v.freeze
+end
+
+# Returns true iff the given key exists
+def has_key?(k)
+ @store.has_key?(k)
+end
+
+# Returns the value for a given key (returns nil if the key does not exist)
+def get(k)
+ @store[k]
 end
 
 # Adds keys from several lines of text.
@@ -95,17 +114,18 @@ if ARGV.size<3
 	exit
 end
 
+@commandstring="pandoc -s -S \"%s\" -f %s --template=\"%s\" -o \"%s\"" # must be reordered to support empty templates
 case ARGV[0].strip
  when /beamer/i then 
-   @commandstring="pandoc -s -S \"%s\" -f %s -t beamer --slide-level 2 --template=\"%s\" -o \"%s\" --natbib"
+   @commandstring="pandoc -s -S \"%s\" -f %s --template=\"%s\" -o \"%s\" --natbib -t beamer --slide-level 2"
    @ext=".tex"
    @variant=:beamer
  when /html/i   then 
-   @commandstring="pandoc -s -S \"%s\" -f %s -t html  --template=\"%s\" -o \"%s\""
+   @commandstring="pandoc -s -S \"%s\" -f %s --template=\"%s\" -o \"%s\" -t html"
    @ext=".html"
    @variant=:html
  when /latex/i  then 
-   @commandstring="pandoc -s -S \"%s\" -f %s -t latex --template=\"%s\" -o \"%s\" --natbib"
+   @commandstring="pandoc -s -S \"%s\" -f %s --template=\"%s\" -o \"%s\" -t latex --natbib"
    @ext=".tex"
    @variant=:latex
  else                
@@ -113,6 +133,8 @@ case ARGV[0].strip
 	puts " panruby.rb latex|beamer|html [name] [template]" 
 	exit
 end
+
+# Try to load config.yaml file
 
 name=ARGV[1].sub(/[.]\w+([.]erb)?$/,"")
 
@@ -152,13 +174,13 @@ if /.*[.]md[.]erb$/ =~ file
   open(file) do|f|
     engine=ERB.new(f.readlines.join,nil,'<>')
     File.open(input,"w+") do|t|
-      t.write(engine.result())
+      t.write(engine.result(binding))
     end
   end
 end
 commandstring=String.new(@commandstring)
-commandstring=commandstring % [input,@extensions.join("+"),template,output]
-commandstring << " --bibliography=\"%s\""%bibfile if File.exists?(bibfile)
+commandstring=commandstring % [input,@extensions.join("+"),template,output] # Change order to support empty template
+commandstring << " --bibliography=\"%s\""%bibfile if File.exists?(bibfile) # Move to command specification
 variables=[]
 @keys.each_pair do|k,v|
  variables << " -V %s=\"%s\"" % [k,v]
@@ -168,4 +190,4 @@ commandstring << (variables.join)
 puts "# generated commandstring #"
 puts commandstring
 
-exec(commandstring) # inherently insecure
+exec(commandstring) # inherently insecure # use exec("pandoc","parameter") instead

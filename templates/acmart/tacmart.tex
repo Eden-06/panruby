@@ -1,0 +1,204 @@
+\documentclass[$acmstyle$$if(fontsize)$,$fontsize$$endif$$if(review)$,review$endif$$if(anonymous)$,anonymous$endif$$if(screen)$,screen$endif$]{acmart}
+$if(pagenumbers)$
+\settopmatter{printfolios=true}
+$endif$
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+%% Some recommended packages.
+\usepackage{booktabs}   %% For formal tables:
+                        %% http://ctan.org/pkg/booktabs
+\usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+                        %% http://ctan.org/pkg/subcaption
+
+
+
+% typical mathesymbols
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage{wasysym}
+\usepackage{listings}
+
+% insert images
+\usepackage{graphicx}
+% make all include graphics correspond to width and aspectratio
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+%Copied from https://github.com/jgm/pandoc-templates/blob/master/default.latex
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%% Journal information (used by PACMPL format)
+%% Supplied to authors by publisher for camera-ready submission
+$if(journal)$
+\acmJournal{$journal.name$}
+\acmVolume{$journal.volume$}
+$if(journal.number)$\acmNumber{$journal.number$}$endif$
+$if(journal.article)$\acmArticle{$journal.article$}$endif$
+$if(journal.year)$\acmYear{$journal.year$}$endif$
+$if(journal.month)$\acmMonth{$journal.month$}$endif$
+$if(journal.doi)$\acmDOI{$journal.doi$}$endif$
+$if(journal.startpage)$\startPage{$journal.startpage$}$endif$
+$endif$
+
+%% Conference information (used by SIGPLAN proceedings format)
+%% Supplied to authors by publisher for camera-ready submission
+$if(conference.name)$
+\acmConference$if(conference.shortname)$[$conference.shortname$]$endif${$conference.name$}{$conference.date$}{$conference.venue$}
+$if(conference.year)$\acmYear{$conference.year$}$endif$
+$if(conference.isbn)$\acmISBN{$conference.isbn$}$endif$
+$if(conference.doi)$\acmDOI{$conference.doi$}$endif$
+$if(journal.startpage)$\startPage{$journal.startpage$}$endif$
+$endif$
+
+
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission
+$if(copyright)$
+\setcopyright{$copyright$}
+$else$
+\setcopyright{none}            %% For review submission
+$endif$
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\copyrightyear{2017}           %% If different from \acmYear
+
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+%% Citation style
+%% Note: author/year citations are required for papers published as an
+%% issue of PACMPL.
+%\citestyle{acmauthoryear}  %% For author/year citations
+%\citestyle{acmnumeric}     %% For numeric citations
+%\setcitestyle{nosort}      %% With 'acmnumeric', to disable automatic
+                            %% sorting of references within a single citation;
+                            %% e.g., \cite{Smith99,Carpenter05,Baker12}
+                            %% rendered as [14,5,2] rather than [2,5,14].
+%\setcitesyle{nocompress}   %% With 'acmnumeric', to disable automatic
+                            %% compression of sequential references within a
+                            %% single citation;
+                            %% e.g., \cite{Baker12,Baker14,Baker16}
+                            %% rendered as [2,3,4] rather than [2-4].
+
+$if(preamble)$
+%Preamble generated from md
+$preamble$
+$endif$
+
+\begin{document}
+
+%% Title information
+\title$if(shorttitle)$[$shorttitle$]$endif${$title$}         %% [Short Title] is optional;
+                                        %% when present, will be used in
+                                        %% header instead of Full Title.
+%\titlenote{with title note}            %% \titlenote is optional;
+                                        %% can be repeated if necessary;
+                                        %% contents suppressed with 'anonymous'
+$if(subtitle)$                    
+\subtitle{$subtitle$}
+$endif$                                  
+                                        %% \subtitle is optional
+%\subtitlenote{with subtitle note}      %% \subtitlenote is optional;
+                                        %% can be repeated if necessary;
+                                        %% contents suppressed with 'anonymous'
+
+
+%% Author information
+%% Contents and number of authors suppressed with 'anonymous'.
+%% Each author should be introduced by \author, followed by
+%% \authornote (optional), \orcid (optional), \affiliation, and
+%% \email.
+%% An author may have multiple affiliations and/or emails; repeat the
+%% appropriate command.
+%% Many elements are not rendered, but should be provided for metadata
+%% extraction tools.
+
+%% Author with single affiliation.
+$for(authors)$
+\author{$for(authors.author)$$authors.author$$sep$, $endfor$}
+$if(authors.note)$\authornote{$authors.note$}$endif$ %% \authornote is optional;
+%\orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is not supported
+\affiliation{%
+  \department{$authors.department$}   %% \department is recommended
+  \institution{$authors.institution$} %% \institution is required
+ 	$if(authors.street)$\streetaddress{$authors.street$}$endif$ %
+ 	$if(authors.city)$\city{$authors.city$}$endif$ %
+ 	$if(authors.state)$\city{$authors.state$}$endif$ %
+ 	$if(authors.postcode)$\city{$authors.postcode$}$endif$ %
+ 	\country{$authors.country$} % \country is recommend
+}
+\email{$authors.email$} %% \email is recommended
+$endfor$
+
+
+%% Paper note
+%% The \thanks command may be used to create a "paper note" ---
+%% similar to a title note or an author note, but not explicitly
+%% associated with a particular element.  It will appear immediately
+%% above the permission/copyright statement.
+$if(thanks)$
+\thanks{$thanks$}                %% \thanks is optional
+$endif$
+                                        %% can be repeated if necesary
+                                        %% contents suppressed with 'anonymous'
+
+
+%% Abstract
+%% Note: \begin{abstract}...\end{abstract} environment must come
+%% before \maketitle command
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at 'http://dl.acm.org/ccs/ccs.cfm' and assign it to ccscodesnippet.
+$if(ccscodesnippet)$
+$ccscodesnippet$
+%% End of generated code
+$endif$
+
+
+
+%% Keywords
+%% comma separated list
+$if(keywords)$
+\keywords{$for(keywords)$$keywords$$sep$, $endfor$}
+$endif$  %% \keywords are optional
+
+
+%% \maketitle
+%% Note: \maketitle command must come after title commands, author
+%% commands, abstract environment, Computing Classification System
+%% environment and commands, and keywords command.
+\maketitle
+
+$body$
+
+$if(acknowledgments)$
+%% Acknowledgments
+\begin{acks}                            %% acks environment is optional
+$acknowledgments$
+\end{acks}
+$endif$
+
+%bibliography requires --natbib argument for pandoc
+$if(bibliography)$
+$if(nocite)$
+\nocite{*}
+$endif$
+\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+$endif$
+
+$include-after$
+\end{document}

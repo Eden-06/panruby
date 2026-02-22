@@ -1,0 +1,39 @@
+# Introduction
+
+<!--background-->
+Charles W. Bachmann was the first researcher to investigate roles back in the year 1977.
+He proposed role-based modeling [@bachman77] to capture both context-dependent and collaborative behavior of objects.
+Since then, a large variety of approaches in different research areas, ranging 
+from data modeling\ [@bachman77;@halpin2005;@liu2009] via conceptual modeling\ [@steimann2000b;@guizzardi2012conceptual]
+through to programming languages\ [@boella06ont;@herrmann2005;@balzer07;@pradel2009scala] emerged.
+More importantly, because current software systems are characterized by increased complexity and context-dependence\ [@murer2013], there is a strong demand for new concepts beyond object-oriented design.
+Although mainstream object-oriented modeling languages are good at capturing a system's structure, 
+they lack ways to model the systems behavior,
+as it dynamically emerges through collaborating objects\ [@reenskaug2009].
+In turn, roles are a natural concept capturing the behavior of participants in a collaboration.
+Moreover, roles permit the specification of interactions independent from the interacting objects.
+Similarly, more recent approaches use roles to capture context-dependent properties of objects\ [@liu2009;@herrmann2005].
+The notion of roles can help to tame the increased complexity and context-dependence.
+Despite all that, these years of research had almost no influence on current software development practice.
+
+* [ ] This is a test
+* [x] This is another test
+
+[^0]: Please note, that this work considers Role-Based Access Control\ [@ferraiolo2009] as a special application for roles with a rather narrow scope.
+
+<!--problem definition of this work -->
+To enable the practical application of roles, two major requirements have to be fulfilled.
+First, besides the intuitive semantics underlying the role concept, its notions must be formally specified to create a coherent understanding of relational and context-dependent roles.
+Second, to permit scalability of role-based modeling languages automatic mechanisms to validate the well-formedness and consistency are required.
+Therefore, a formal model is indispensable.
+In sum, a major blocking factor for the practical application of roles
+is their lack of a consistent formal model. 
+Thus, this paper provides a formal model for a role-based modeling language
+supporting both natures of roles.
+This allows for the formal and automatic verification of 
+well-formedness, compliance, and validity of models at design time and their instances at runtime.
+
+The paper is structured as follows:
+<%= ref("running-example","Sect.\ 1") %> introduces a small running example used for the remainder of the paper.
+Afterwards, <%= ref("nature-of-roles","Sect.\ 2") %> elaborates on the nature of roles and surveys contemporary role-based modeling languages.
+The main contribution of this paper, ...

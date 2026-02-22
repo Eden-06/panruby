@@ -1,0 +1,121 @@
+% Test Programming Template
+% Thomas Kühn
+% 22.05.2025
+
+---
+#example yaml
+lang: en-US #has no effect on document
+review: true #optional, adds linenumbers
+#title: 'A Combined Formal Model of Roles'
+subtitle: "Example for Programming" #optional subtitle
+shorttitle: "Exp" #optional shorttitle for header
+authorrunning: "Kühn et al." #optional
+authors: 
+  - author: "Thomas Kühn"
+    orcid: "0000-0001-7312-2891"
+    affiliation: "Martin Luther Universität Halle-Wittenberg, Halle(Saale), Germany" #optional
+	affiliationid: "a" #optional
+    email: "thomas.kuehn@informatik.uni-halle."
+  - author: "Edward Sabinus"
+    affiliationid: "a" #optional
+    email: "edward.sabinus@informatik.uni-halle."
+  - author: "Uwe Aßmann"
+    affiliation: "Technische Universität Dresden, Dresden, Germany" #optional
+    email: "uwe.assmann@tu-dresden.de"
+    note: "He contributed nothing."
+abstract: >
+  Role-based modeling has been investigated for over 35 years
+  as a promising paradigm to model complex, dynamic systems.
+  Although current software systems are characterized by increasing complexity and context-dependence,
+  all this research had almost no influence on current software development practice,
+  still being discussed in recent literature.
+keywords:
+	- Role-based Modeling
+	- Role-based Programming
+paperdetails:
+    perspective: "art" #mandatory, one of art, sciencetheoretical, scienceempirical, engineering
+	areas: ["Social Coding", "General-purpose programming"] #mandatory, use terms from http://programming-journal.org/cfp/
+	license: "cc-by" #optional, cc-by (default), cc-by-nc
+	#submitted: "2025-08-10" #optional, default will use date
+	#published: "2025-10-11" #optional
+	#year: "2025" #optional
+	#volume: 1 #optional
+	#articlenumber: 1 #optional
+	#doi: #optional, not reflected in the paper
+ccscodesnipet: | #should be generated via http://dl.acm.org/ccs/ccs.cfm
+	%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+	\begin{CCSXML}
+	<ccs2012>
+	<concept>
+	<concept_id>10011007.10011006.10011008</concept_id>
+	<concept_desc>Software and its engineering~General programming languages</concept_desc>
+	<concept_significance>500</concept_significance>
+	</concept>
+	<concept>
+	<concept_id>10003456.10003457.10003521.10003525</concept_id>
+	<concept_desc>Social and professional topics~History of programming languages</concept_desc>
+	<concept_significance>300</concept_significance>
+	</concept>
+	</ccs2012>
+	\end{CCSXML}
+
+	\ccsdesc[500]{Software and its engineering~General programming languages}
+	\ccsdesc[300]{Social and professional topics~History of programming languages}
+preamble: | #optional
+	\usepackage{pbox}
+acknowledgments: > #optional
+	Any opinions, findings, and conclusions or recommendations expressed in this material are those
+	of the author and do not necessarily reflect the views of the National Science Foundation.
+include-after: | #optional
+	\appendix
+	\section{Appendix}
+
+	Text of appendix \ldots
+...
+<%
+# Definition some utility functions in addition to panruby
+
+if @variant==:html
+	@commandstring << " --highlight-style tango"
+else
+	@commandstring << " --listings"
+end
+
+define_singleton_method(:ref){|ref,text|
+ if @variant==:latex then
+ "\\autoref{%s}"%[ref]
+ else
+ "[%s](#%s)"%[text,ref]
+ end
+}
+
+define_singleton_method(:label){|label|
+ if @variant==:latex
+ "\\label{%s}" % [label]
+ elsif @variant==:html
+ "<a id=\"%s\"/>" % [label]
+ else
+ "{#%s}" % [label]
+ end
+}
+
+@sections=["sections/introduction.md.erb", "sections/running-example.md.erb", "sections/nature-of-roles.md.erb", "sections/conclusion.md.erb"]
+%>
+
+
+<% 
+@sections.each do|file| 
+  if File.exist?(file)
+%>
+<!--- <%= file %> --->
+
+<%= load(file) %>
+
+<%
+  else 
+%>
+**Warning**: File <%= file %> not found!
+<% 
+  end 
+end 
+%>

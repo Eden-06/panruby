@@ -15,13 +15,15 @@ writing.
     ~~~
 
 ## Version:
- 1.2
+ 1.2.3
 
 ## Requirements
 
-* Ruby version 1.9.1
+* pandoc
+* Ruby version 3.0.0
 * Document encoding UTF-8
 * ERB
+* make
 
 ## Application Interface
 

@@ -1,10 +1,11 @@
-\documentclass[$acmstyle$$if(fontsize)$,$fontsize$$endif$$if(review)$,review$endif$$if(anonymous)$,anonymous$endif$$if(screen)$,screen$endif$]{acmart}
+\documentclass[$acmstyle$$if(fontsize)$,$fontsize$$endif$$if(review)$,review$endif$$if(anonymous)$,anonymous$endif$$if(screen)$,screen$endif$,natbib=false]{acmart}
 $if(pagenumbers)$
 \settopmatter{printfolios=true}
 $endif$
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
+
 
 %% Some recommended packages.
 \usepackage{booktabs}   %% For formal tables:
@@ -13,15 +14,14 @@ $endif$
                         %% http://ctan.org/pkg/subcaption
 
 
-
 % typical mathesymbols
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
-\usepackage{textcomp}
-\usepackage{latexsym}
-\usepackage{mathtools}
-\usepackage{wasysym}
+% \usepackage{amsmath}
+% \usepackage{amsthm}
+% \usepackage{amssymb}
+% \usepackage{textcomp}
+ \usepackage{latexsym}
+% \usepackage{mathtools}
+% \usepackage{wasysym}
 \usepackage{listings}
 
 % insert images
@@ -29,9 +29,32 @@ $endif$
 % make all include graphics correspond to width and aspectratio
 \setkeys{Gin}{width=\linewidth,keepaspectratio}
 
+\usepackage{pbox}
+\usepackage{xspace}
+
+\usepackage{xcolor}
+
+% make all include graphics correspond to width and aspectratio
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+%long table for markdown tables
+\usepackage{longtable}
+
+% Listings settings
+\lstset{basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi, commentstyle=\rmfamily\itshape,escapechar=\%, captionpos=b, keywordstyle=\lst@ifdisplaystyle\color{purple}\fi\bfseries, stringstyle=\ttfamily\bfseries, showstringspaces=false, showlines, columns=fixed, fontadjust, boxpos=c, extendedchars=true, inputencoding=utf8,  numbers=left, numberstyle=\scriptsize, stepnumber=1, numbersep=5pt, backgroundcolor=\color{gray!10}, showspaces=false, showstringspaces=false, showtabs=false, tabsize=2, breaklines=true, breakatwhitespace=true, breakautoindent=true, linewidth=\linewidth, frame=l, xleftmargin=.05\linewidth, xrightmargin=.05\linewidth, numberbychapter=true}
+
+
+
+% add tikz support
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
 %Copied from https://github.com/jgm/pandoc-templates/blob/master/default.latex
 \providecommand{\tightlist}{%
 \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\newcommand{\passthrough}[1]{#1}
 
 %% Journal information (used by PACMPL format)
 %% Supplied to authors by publisher for camera-ready submission
@@ -72,7 +95,11 @@ $endif$
 
 
 %% Bibliography style
-\bibliographystyle{ACM-Reference-Format}
+%\bibliographystyle{ACM-Reference-Format}
+\usepackage[style=ACM-Reference-Format,backend=biber]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
 %% Citation style
 %% Note: author/year citations are required for papers published as an
 %% issue of PACMPL.
@@ -125,7 +152,7 @@ $endif$
 $for(authors)$
 \author{$for(authors.author)$$authors.author$$sep$, $endfor$}
 $if(authors.note)$\authornote{$authors.note$}$endif$ %% \authornote is optional;
-%\orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is not supported
+$if(authors.orcid)$\orcid{$authors.orcid$}$endif$    %% \orcid is not supported
 \affiliation{%
   \department{$authors.department$}   %% \department is recommended
   \institution{$authors.institution$} %% \institution is required
@@ -192,12 +219,11 @@ $acknowledgments$
 \end{acks}
 $endif$
 
-%bibliography requires --natbib argument for pandoc
 $if(bibliography)$
 $if(nocite)$
 \nocite{*}
 $endif$
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+\printbibliography
 $endif$
 
 $include-after$

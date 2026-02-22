@@ -1,0 +1,166 @@
+% -*- coding: utf-8; -*-
+% vim: set fileencoding=utf-8 :
+\documentclass[english,$if(review)$,submission$endif$]{programming}
+%% First parameter: the language is 'english'.
+%% Second parameter: use 'submission' for initial submission, remove it for camera-ready (see 5.1)
+
+\usepackage[backend=biber]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+
+
+%
+% Packages and Commands specific to article (see 3)
+%
+% These ones  are used in the guide, replace with your own.
+% 
+\usepackage{multicol}
+\usepackage{ccicons}
+
+% make all include graphics correspond to width and aspectratio
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+%long table for markdown tables
+\usepackage{longtable}
+
+% Listings settings
+\lstset{basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi, commentstyle=\rmfamily\itshape,escapechar=\%, captionpos=b, keywordstyle=\lst@ifdisplaystyle\color{purple}\fi\bfseries, stringstyle=\ttfamily\bfseries, showstringspaces=false, showlines, columns=fixed, fontadjust, boxpos=c, extendedchars=true, inputencoding=utf8,  numbers=left, numberstyle=\scriptsize, stepnumber=1, numbersep=5pt, backgroundcolor=\color{gray!10}, showspaces=false, showstringspaces=false, showtabs=false, tabsize=2, breaklines=true, breakatwhitespace=true, breakautoindent=true, linewidth=\linewidth, frame=l, xleftmargin=.05\linewidth, xrightmargin=.05\linewidth, numberbychapter=true}
+
+
+
+% add tikz support
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
+
+
+%Copied from https://github.com/jgm/pandoc-templates/blob/master/default.latex
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+%%%%%%%%%%%%%%%%%%
+%% These data MUST be filled for your submission. (see 5.3)
+\paperdetails{
+  %% perspective options are: art, sciencetheoretical, scienceempirical, engineering.
+  %% Choose exactly the one that best describes this work. (see 2.1)
+  perspective=$paperdetails.perspective$,
+  %% State one or more areas, separated by a comma. (see 2.2)
+  %% Please see list of areas in http://programming-journal.org/cfp/
+  %% The list is open-ended, so use other areas if yours is/are not listed.
+  $if(paperdetails.areas)$area={$for(paperdetails.areas)$$paperdetails.areas$$sep$, $endfor$},$else$% $endif$
+  %% You may choose the license for your paper (see 3.)
+  %% License options include: cc-by (default), cc-by-nc
+  % license=cc-by,
+  $if(paperdetails.license)$license=$paperdetails.license$,$else$% $endif$
+  $if(paperdetails.submitted)$submitted=$paperdetails.submitted$,$else$submitted=$date$,$endif$
+  $if(paperdetails.published)$published=$paperdetails.published$,$else$% $endif$
+  $if(paperdetails.year)$year=$paperdetails.year$,$else$% $endif$
+  $if(paperdetails.volume)$volume=$paperdetails.volume$,$else$% $endif$
+  $if(paperdetails.articlenumber)$articlenumber=$paperdetails.articlenumber$,$else$% $endif$
+}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+%% These data are provided by the editors. May be left out on submission.
+%\paperdetails{
+%  submitted=2016-08-10,
+%  published=2016-10-11,
+%  year=2016,
+%  volume=1,
+%  issue=1,
+%  articlenumber=1,
+%}
+%%%%%%%%%%%%%%%%%%
+
+$if(preamble)$
+%Preamble generated from md
+$preamble$
+$endif$
+
+\begin{document}
+
+\title{$title$}
+$if(subtitle)$
+\subtitle{$subtitle$}
+$endif$
+$if(shorttitle)$
+\titlerunning{$shorttitle$} 
+$endif$
+
+%Authors and Affiliations
+$for(authors)$
+  \author$if(authors.affiliationid)$[$authors.affiliationid$]$endif${$authors.author$}$if(authors.orcid)$[$authors.orcid$]$endif$
+    $if(authors.email)$
+    \authorinfo{$if(authors.note)$$authors.note$ $endif$Contact via \email{$authors.email$}}
+    $endif$
+  $if(authors.affiliation)$
+  \affiliation$if(authors.affiliationid)$[$authors.affiliationid$]$endif${$authors.affiliation$}
+  $endif$
+$endfor$
+
+
+$if(authorrunning)$
+\titlerunning{$authorrunning$} 
+$endif$
+
+%% Keywords
+%% comma separated list
+$if(keywords)$
+\keywords{$for(keywords)$$keywords$$sep$, $endfor$}
+$endif$  %% \keywords are optional
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Please go to https://dl.acm.org/ccs/ccs.cfm and generate your Classification
+% System [view CCS TeX Code] stanz and copy _all of it_ to this place.
+%% From HERE
+$if(ccscodesnippet)$
+$ccscodesnippet$
+%% End of generated code
+$endif$
+
+% To HERE
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\maketitle
+
+% Please always include the abstract.
+% The abstract MUST be written according to the directives stated in 
+% http://programming-journal.org/submission/
+% Failure to adhere to the abstract directives may result in the paper
+% being returned to the authors.
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$body$
+
+%-------
+
+
+$if(acknowledgments)$
+%% Acknowledgments
+\acks
+$acknowledgments$
+
+$endif$
+
+
+
+$include-after$
+
+
+
+
+\printbibliography
+
+\end{document}
+
+% Local Variables:
+% TeX-engine: luatex
+% End:

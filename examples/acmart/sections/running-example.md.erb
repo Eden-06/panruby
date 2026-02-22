@@ -1,0 +1,31 @@
+# Running Example
+
+![Overview of the banking application](images/BankOverview.pdf){#fig-overview width=300px}
+
+Before diving into role-based modeling, we first employ the real world scenario
+of a small banking application, extracted from [@reenskaug2009].
+A bank is a financial institution that employs consultants and provides
+banking services to their customers, who are either persons or companies.
+Customers can be advised by consultants, own several savings and checking accounts,
+and perform transactions.
+Transactions encapsulate the process of transferring money from exactly one source account to one target account.
+They are initiated by a customer, however, managed and executed by the bank.
+Additionally, financial regulations require that consultants should not advise themselves as a customer
+and checking accounts must have exactly one owner whereas savings accounts
+can have multiple owners.
+Furthermore, no account can be both a checking and a savings account as well as
+both the source and target of the same transaction. 
+<%= ref("fig-overview","Fig.\ 1") %> illustrates this scenario.
+
+```{.java #lst-test caption="Test caption" float=t captionpos=t}
+record P(int lvl);
+int one()          { return 1; }
+int up(int x)      { return x+1; }
+P player()         { return new P(0); }
+P attack(P p)      { return new P(p.lvl()+1); }
+P spell(P p)       { return new P(p.lvl()+2); }
+P fusion(P p, P q) { return new P(p.lvl()+q.lvl()); }
+int level(P p)     { return p.lvl(); }
+```
+
+This is a test text referencing @reenskaug2009 and <%= ref("lst-test","Listing\ 1") %>.

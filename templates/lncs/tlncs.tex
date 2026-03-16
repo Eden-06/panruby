@@ -1,0 +1,159 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.21 of 2022/01/12
+%
+\documentclass[runningheads]{llncs}
+%
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman,main=english]{babel}
+\usepackage{csquotes}
+\usepackage[hyphens]{url}
+\usepackage[table]{xcolor}
+% T1 fonts will be used to generate the final print and online PDFs,
+% so please use T1 fonts in your manuscript whenever possible.
+% Other font encondings may result in incorrect characters.
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should be included in EPS format.
+
+%Change default figure and table placement to either top or bottom
+\makeatletter
+\def\fps@figure{tb}
+\def\fps@table{tb}
+\makeatother
+\usepackage{subcaption}
+
+% typical mathesymbols
+% \usepackage{amsmath}
+% \usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{textcomp}
+% \usepackage{latexsym}
+% \usepackage{mathtools}
+% \usepackage{wasysym}
+
+\usepackage{hyperref}
+\definecolor{LinkColor}{rgb}{0,0,0.5}
+%alternatively: \hypersetup{colorlinks=false}
+\hypersetup{colorlinks=true,%
+           linkcolor=LinkColor,%
+           citecolor=LinkColor,%
+           filecolor=LinkColor,%
+           menucolor=LinkColor,%
+           %pagecolor=LinkColor,%
+           urlcolor=LinkColor}
+
+%
+% make all include graphics correspond to width and aspectratio
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+%long table for markdown tables
+\usepackage{longtable}
+\usepackage{booktabs}
+
+% package for advanzed enumerations
+\usepackage{enumerate}
+% insert sourcecode
+\usepackage{listings}
+% Listings settings
+\lstset{basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi, commentstyle=\rmfamily\itshape,escapechar=\%, captionpos=b, keywordstyle=\lst@ifdisplaystyle\color{purple}\fi\bfseries, stringstyle=\ttfamily\bfseries, showstringspaces=false, showlines, columns=fixed, fontadjust, boxpos=c, extendedchars=true, inputencoding=utf8,  numbers=left, numberstyle=\scriptsize, stepnumber=1, numbersep=5pt, backgroundcolor=\color{gray!10}, showspaces=false, showstringspaces=false, showtabs=false, tabsize=2, breaklines=true, breakatwhitespace=true, breakautoindent=true, linewidth=\linewidth, frame=l, xleftmargin=.05\linewidth, xrightmargin=.05\linewidth, numberbychapter=true}
+
+%\usepackage[sectionbib,sort,numbers]{natbib}
+%\usepackage[natbib]{biblatex}
+\usepackage[backend=biber, style=lncs]{biblatex}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+
+
+% if this cause trouble with the splncs03.bst, use the splncsnat bibstyle
+% Download splncsnat.bst from the web http://links.tedpavlic.com/bst/splncsnat.bst
+
+% add tikz support
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
+%Copied from https://github.com/jgm/pandoc-templates/blob/master/default.latex
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+$if(preamble)$
+%Preamble generated from md
+$preamble$
+$endif$
+
+\begin{document}
+
+$include-before$
+
+%
+\title{$title$}
+$if(shorttitle)$
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+\titlerunning{$shorttitle$}
+$endif$
+%
+%
+\author{$for(authors)$$authors.author$$if(authors.affiliationid)$\inst{$authors.affiliationid$}$endif$$if(authors.orcid)$\orcidID{$authors.orcid$}$endif$$sep$\and $endfor$}
+%
+$if(authorrunning)$
+\authorrunning{$authorrunning$}
+$endif$
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{$for(authors)$$if(authors.institution)$$authors.institution$, $if(authors.postcode)$$authors.postcode$ $endif$$if(authors.city)$$authors.city$, $endif$$authors.country$\\$endif$$if(authors.email)$\email{$authors.email$}$endif$$if(authors.and)$\and $endif$$endfor$}
+
+%
+\maketitle              % typeset the header of the contribution
+%
+$if(abstract)$
+\begin{abstract}
+$abstract$
+
+$if(keywords)$
+\keywords{$for(keywords)$$keywords$$sep$, $endfor$}
+$endif$
+\end{abstract}
+$endif$
+%
+%
+%
+
+$body$
+
+
+\begin{credits}
+$if(acknowledgments)$
+\subsubsection{\ackname}
+$acknowledgments$
+$endif$
+
+$if(disclaimer)$
+\subsubsection{\discintname}
+$disclaimer$
+$endif$
+\end{credits}
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+$if(bibliography)$
+$if(nocite)$
+\nocite{*}
+$endif$
+%\renewcommand{\bibname}{References}
+%\bibliographystyle{splncs04}
+%\bibliography{$for(bibliography)$$bibliography$$sep$, $endfor$}
+\printbibliography
+$endif$
+
+$include-after$
+
+\end{document}

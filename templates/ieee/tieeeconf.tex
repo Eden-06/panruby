@@ -1,0 +1,159 @@
+\documentclass[$ieeestyle$$if(fontsize)$,$fontsize$$endif$$if(paperformat)$,$paperformat$$endif$]{IEEEtran}
+%Currently the following options are not supported:
+% draft, draftcls, draftclsnofoot, final
+%    determines if paper is formatted as a widely spaced draft (for
+%    handwritten editor comments) or as a properly typeset final version.
+% oneside, twoside
+%    determines if layout follows single sided or two sided (duplex)
+%    printing. The only notable change is with the headings at the top of
+%    the pages.
+% onecolumn, twocolumn
+%    determines if text is organized into one or two columns per page. One
+%    column mode is usually used only with draft papers.
+% comsoc, compsoc, transmag
+%    Use the format of the IEEE Communications Society, IEEE Computer Society
+%    or IEEE Transactions on Magnetics, respectively.
+% romanappendices
+%    Use the "Appendix I" convention when numbering appendices. IEEEtran.cls
+%    now defaults to Alpha "Appendix A" convention - the opposite of what
+%    v1.6b and earlier did.
+% captionsoff
+%    disables the display of the figure/table captions. Some IEEE journals
+%    request that captions be removed and figures/tables be put on pages
+%    of their own at the end of an initial paper submission.
+% nofonttune
+%    turns off tuning of the font interword spacing.
+
+$if(fundingfirst)$
+\IEEEoverridecommandlockouts
+$endif$
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+
+%Important includes
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+%\usepackage{cite} //we use biblatex instead
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{latexsym}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+% make all include graphics correspond to width and aspectratio
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\usepackage{pbox}
+\usepackage{xspace}
+
+%More useful includes
+\definecolor{LinkColor}{rgb}{0,0,0.5}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,%
+           linkcolor=LinkColor,%
+           citecolor=LinkColor,%
+           filecolor=LinkColor,%
+           menucolor=LinkColor,%
+           %pagecolor=LinkColor,%
+           urlcolor=LinkColor}
+\usepackage{booktabs}   %% For formal tables:
+                        %% http://ctan.org/pkg/booktabs
+%\usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+                        %% http://ctan.org/pkg/subcaption
+                        %% Is incompatible with IEEEtran
+\usepackage{longtable}
+
+
+% Listings settings
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi, commentstyle=\rmfamily\itshape,escapechar=\%, captionpos=b, keywordstyle=\lst@ifdisplaystyle\color{purple}\fi\bfseries, stringstyle=\ttfamily\bfseries, showstringspaces=false, showlines, columns=fixed, fontadjust, boxpos=c, extendedchars=true, inputencoding=utf8,  numbers=left, numberstyle=\scriptsize, stepnumber=1, numbersep=5pt, backgroundcolor=\color{gray!10}, showspaces=false, showstringspaces=false, showtabs=false, tabsize=2, breaklines=true, breakatwhitespace=true, breakautoindent=true, linewidth=\linewidth, frame=l, xleftmargin=.05\linewidth, xrightmargin=.05\linewidth, numberbychapter=true}
+
+% add tikz support
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{positioning}
+
+
+\usepackage{enumerate}
+%For pandoc support
+%Copied from https://github.com/jgm/pandoc-templates/blob/master/default.latex
+\providecommand{\tightlist}{%
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcommand{\passthrough}[1]{#1}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+%% Bibliography style
+%\bibliographystyle{IEEEtran}
+\usepackage[style=ieee,backend=biber,natbib=true]{biblatex}
+\addbibresource{IEEEabrv.bib}
+$for(bibliography)$
+\addbibresource{$bibliography$}
+$endfor$
+
+\begin{document}
+
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{$title$
+    $if(thanks)$\thanks{$thanks$}$endif$
+}
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+$if(anonymous)$
+\author{
+    \IEEEauthorblockN{Anonymous}
+    \IEEEauthorblockN{\textit{Anonymous University}\\City, Country}
+}
+$else$
+\author{$for(authors)$%
+\IEEEauthorblockN{$if(authors.author)$$for(authors.author)$$authors.author$$sep$, $endfor$$endif$}
+$if(authors.institution)$
+\IEEEauthorblockA{$if(authors.department)$\textit{$authors.department$}\\$endif$
+\textit{$authors.institution$}%
+$if(authors.city)$\\$authors.city$%
+$if(authors.country)$, $authors.country$$endif$%
+$endif$%
+$if(authors.orcid)$\\\href{http://orcid.org/$authors.orcid$}{$authors.orcid$}
+$elseif(authors.email)$\\\url{$authors.email$}$endif$%
+$endif$}
+$sep$\and
+$endfor$}
+$endif$
+
+\date{$date$}
+
+\maketitle
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+\begin{IEEEkeywords}
+$for(keywords)$$keywords$$sep$, $endfor$
+\end{IEEEkeywords}
+
+$body$
+
+$if(acknowledgments)$
+%% Acknowledgments
+\section*{Acknowledgment}
+
+$acknowledgments$
+$endif$
+
+$if(bibliography)$
+$if(nocite)$
+\nocite{*}
+$endif$
+\printbibliography
+$endif$
+
+
+\end{document}

@@ -1,0 +1,131 @@
+# Nature of Roles
+
+Roles are not a new concept in modeling languages, however, the only generally accepted feature of roles is that they can be played by unrelated objects\ [@steimann2000b;@kuehn2014].
+The role of a *customer* of a bank, for instance, can be played by either a *person* or a *company*,
+regardless of them being related or not.
+Besides that, [@steimann2000b] and [@kuehn2014] have shown that there is no common understanding of roles in the literature.
+They identified 26 classifying features attributed to roles, shown in <%= ref("tab-features","Tab.\ 1") %>.
+For now, two of these features are important, because they 
+help to classify approaches to  support either the relational nature 
+or context-dependent nature of roles, namely Feature 2 and 19.
+Additionally, several features indicate that roles and role models are subject to constraints, e.g., Features 6, 16, 17, and 18.
+Accordingly, the following discussion is trisected.
+
+<%  if @variant==:latex %>
+
+<!--- 
+Tables do not work with Pandoc and ACMart
+https://github.com/jgm/pandoc/issues/1023#issuecomment-579866888
+--->
+
+\input{tables/features.tex}
+
+<% else %>
+
+Table: Classifying features of roles, extracted from\ [@steimann2000b;@kuehn2014]. <%= label("tab-features") %>
+
+| Nr. | Feature of Roles                                            |
+|:---:|:------------------------------------------------------------|
+| 1.  | Roles have properties and behaviors *(M1, M0)*
+| 2.  | Roles depend on relationships *(M1)* 
+| 3.  | Objects may play different roles simultaneously *(M1, M0)*
+| 4.  | Objects may play the same role (type) several times *(M0)*
+| 5.  | Objects may acquire and abandon roles dynamically *(M0)*
+| 6.  | The sequence of role acquisition and removal may be restricted *(M1, M0)*
+| 7.  | Unrelated objects can play the same role *(M1)*
+| 8.  | Roles can play roles *(M1, M0)*
+| 9.  | Roles can be transferred between objects *(M0)*
+| 10. | The state of an object can be role-specific *(M0)*
+| 11. | Features of an object can be role-specific *(M1)*
+| 12. | Roles restrict access *(M0)*
+| 13. | Different roles may share structure and behavior *(M1)*
+| 14. | An object and its roles share identity *(M0)*
+| 15. | An object and its roles have different identities *(M0)*
+| 16. | Relationships between roles can be constrained *(M1)*
+| 17. | There may be constraints between relationships *(M1)*
+| 18. | Roles can be grouped and constrained together *(M1)*
+| 19. | Roles depend on compartments *(M1, M0)*
+| 20. | Compartments have properties and behaviors *(M1, M0)*
+| 21. | A role can be part of several compartments *(M1, M0)*
+| 22. | Compartments may play roles like objects *(M1, M0)*
+| 23. | Compartments may play roles which are part of themselves *(M1, M0)*
+| 24. | Compartments can contain other compartments *(M1, M0)*
+| 25. | Different compartments may share structure and behavior *(M1)*
+| 26. | Compartments have their own identity *(M0)*
+
+<% end %>
+
+## Relational Nature
+
+Modeling languages usually feature some notion of role.
+Consider, ER\ [@chen76] and UML\ [@rumbaugh99], 
+where roles denote the named ends of relationships or associations.
+
+Either way, they neither have properties\ (Feature 1)
+nor the ability to be played by unrelated objects\ (Feature 7).
+In the case of UML, one could argue that this can be resolved by modeling roles
+as classes and use inheritance to relate them to their players.
+This, however, fails to capture the intended dynamism of roles
+and results in exponentially many classes\ [@steimann2000b].
+Several role-based modeling languages\ [@bachman77;@steimann2000b;@halpin2005;@balzer2011;@jaekel2015]
+introduced roles tied to relationships as first-class citizens.
+Hence, these approaches can represent the *advises* relationship between *consultants* and *customers* and the latter be played by either *persons* or *companies*.
+These languages assume that all roles and relationships
+are equally relevant to an object's properties.
+Thus, there is no notion of context, scope, or institution on which roles and relationships depend on.
+In most approaches (except [@halpin2005;@balzer2011]) relationships cannot play roles themselves.
+In the banking application, the transaction must be modeled as a relationship, 
+but cannot be tied to the specific bank owning this transaction.
+This, in turn, prevents reusing the notion of a financial transaction,
+as it is now tied to the modeled bank.
+To resolve this dilemma it must be understood that relationships themselves are context-dependent.
+
+## Context-Dependent Nature
+
+To incorporate the missing contextual-dependency of roles,
+recent role-based modeling languages\ [@genovese2007;@reenskaug2009;@hennicker2014]
+focused on the context-dependent nature.
+These approaches introduce some sort of *context* to encapsulate
+the roles relevant to a certain situation or interaction.
+Due to the fact that the term itself is massively overloaded,
+several researchers introduced other terms to denote the context of a role, e.g.,
+*environment*\ [@zhu2006], *institution*\ [@baldoni2006], *ensemble*\ [@hennicker2014],
+and *compartment*\ [@kuehn2014].
+Henceforth, the term *compartment* is used because its definition, as *"objectified collaboration with a limited number of participating roles and a fixed scope"*\ [@kuehn2014],
+encompasses all of the other notions. 
+In conclusion, these approaches capture the contextual dependence of roles
+by making the compartments their definitional boundary.
+For the banking example, the *transaction* can be considered a compartment,
+as it captures the transfer of money from a *source* to a *target* account.
+While most of these approaches assume that roles depend on (some kind of) compartment (Feature 19)
+and have properties (Feature 20),
+only few consider compartments as objects able to play roles themselves (Feature 22).
+The latter is crucial to ensure that the *transaction* compartment (instance) can be owned by a *bank* compartment (instance) managing its creation and execution.
+Nevertheless, most approaches relied solely on compartments\ [@baldoni2006;@zhu2006;@genovese2007;@reenskaug2009]
+and did not include context-dependent relationships between roles.
+
+## Constraining Role Models
+
+So far the discussion revolved around the nature of roles in role-based modeling languages 
+and did not cover their capabilities to specify particular constraints for roles and relationships.
+Typically,  modeling languages support various constraints on relationships\ (Feature 16).
+*Cardinality constraints*, for instance, are featured in most modeling languages, e.g., ER\ [@chen76] and UML\ [@rumbaugh99].
+They limit the number of entities related by a relationship.
+In our example, the *owns checking account* relationship must be constrained with cardinality *one* on the *customer* side and *zero-to-many* on the *checking account* to ensure that checking accounts are owned by exactly one customer.
+*Intra-relationship constraints*\ [@balzer2011] represent 
+mathematical constraints for relations that additionally constrain relationships.
+The *advises* relationship, for instance, can be constrained to be *irreflexive*
+ensuring that persons playing the *consultant* role cannot advise themselves as a *customer*.
+*Inter-relationship constraints*\ [@halpin2005]
+are constraints between individual relationships (Feature 17). They can be used to define subsets or disjunctions between relationships.
+An example for the former is a *father son* relationship required to be a subset of the *parent child* relationship.
+While these constraints limit relationships, there are two kinds of constraints for roles.
+*Role constraints* limit the types of roles that can be played simultaneously by one object.
+They include notions to prohibit or require another role to be played if the other role is played [@rieh98].
+In our example, the statement that an *account* cannot be a *checking account* and a *savings account* at the same time can be expressed with a *role-prohibition* between these roles.
+Moreover, [@zhu2006;@kuehn2014] suggested to employ notions to group and constrain roles together.
+In contrast, *occurrence constraints*\ [@zhu2006;@hennicker2014] limit the number of roles 
+present in a compartment, i.e., the number of role instances of a particular type in a compartment instance.
+Consider the *transaction* compartment that requires the presence of exactly one *source* and one *target* role.
+Although various role-based modeling languages have introduced different kinds of constraints,
+no approach has included all of them into one coherent model.

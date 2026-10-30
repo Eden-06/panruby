@@ -1,0 +1,166 @@
+\documentclass[parskip=half,DIV=12,captions=tableabove,twoside=false,open=any]{scrreprt}
+
+% Basic utilities:
+\usepackage{ifthen}
+\RequirePackage{etoolbox} % Hooks for executing code.
+\RequirePackage{color,xcolor}
+\RequirePackage{xargs}	% to deal with optional arguments in newcommands
+                        % for renewcommandx
+
+% language, character set, hyphenation, fontfamilies
+\usepackage{polyglossia}
+    \setdefaultlanguage[babelshorthands=true]{german}
+    \setotherlanguage{english}
+
+\usepackage[autostyle=true, german=quotes]{csquotes}
+\usepackage{microtype}
+\usepackage[normalem]{ulem} % for underline and stuck
+
+% Pandoc stuff
+\providecommand{\passthrough}[1]{#1} % falls noch nicht definiert
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% graphics
+\usepackage{graphicx}
+\graphicspath{$graphicspaths$}
+
+% math-packages
+\usepackage{mathtools}
+\usepackage{polynom}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+
+\usepackage{stmaryrd}
+\usepackage{bussproofs}
+\usepackage{mathpartir}
+\usepackage{semantic}
+\usepackage{amsthm} %therorems (for proof, definition, lemma)
+
+% tables 
+\usepackage{booktabs}
+\usepackage{longtable} % panruby
+\usepackage{tabularx}  % panruby
+\usepackage{comment}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{makecell}
+\usepackage{forest}
+\usepackage{tikz}
+ \usetikzlibrary{intersections}
+ %\usetikzlibrary{automata, positioning}
+ \usetikzlibrary{patterns}
+ \usetikzlibrary{calc}
+ \usetikzlibrary{positioning}
+ \usetikzlibrary{shapes.multipart} % Für Knoten mit mehreren Einträgen
+ \usetikzlibrary{matrix, positioning}
+\usepackage{xspace}
+
+%	programming, code, algorithm packages and sets
+\usepackage{listings}
+    % Listings settings
+    \lstset{
+        basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi,
+        commentstyle=\rmfamily\itshape,escapechar=\%,
+        captionpos=b,
+        keywordstyle=\lst@ifdisplaystyle\fi\bfseries,
+        stringstyle=\ttfamily\bfseries,
+        showstringspaces=false,
+        showlines,
+        columns=fixed,
+        fontadjust,
+        boxpos=c,
+        extendedchars=true,
+        inputencoding=utf8,
+        numbers=left,
+        numberstyle=\scriptsize,
+        stepnumber=1, numbersep=5pt,
+        backgroundcolor=\color{gray!10},
+        showspaces=false,
+        showstringspaces=false,
+        showtabs=false,
+        tabsize=2,
+        breaklines=true,
+        breakatwhitespace=true,
+        breakautoindent=true,
+        linewidth=\textwidth,
+        frame=l,
+        xleftmargin=.05\textwidth,
+        xrightmargin=.05\textwidth,
+        numberbychapter=true
+    }
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+    % settings for algorithm2e
+    \DontPrintSemicolon % hide semicolons (for comments)
+    \setlength{\algomargin}{1em}
+
+    \SetKwInput{KwInput}{Input} % Set the Input
+    \SetKwInOut{KwOutput}{Output} % set the Output
+    \SetKwProg{Fn}{function}{\, is}{end function} % Function definition.
+    \SetKwBlock{Repeat}{repeat}{}
+    \SetKw{KwBy}{by}
+    \SetKw{Or}{\bfseries or}
+    \SetKw{And}{\bfseries and}
+    \SetKw{Not}{\bfseries not}
+    \SetKw{Continue}{continue}
+
+    \newcommand\algotefont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+    \SetCommentSty{algotefont}
+    % \tcc{comment} -> /* comment */
+    % \tcp{comment} -> // comment
+\usepackage{ragged2e}
+\usepackage{verbatim}
+
+% pagestyles and layout
+\usepackage{pdflscape} % turms the page with the text
+% \usepackage{lscape}    % only turns the text but not the page
+\usepackage{geometry}
+\usepackage[headsepline=on,footsepline=on]{scrlayer-scrpage}
+\def\ps@doc{%
+    \pagestyle{scrheadings}
+    \clearpairofpagestyles 
+    \automark{section}
+    \lohead{\leftmark}
+    %\rohead{}
+    \lofoot{}
+    \rofoot*{\pagemark}
+    \renewcommand*{\chapterpagestyle}{headings} 
+    %\KOMAoptions{head=onemargin, foot=onemargin} % Seitenränder
+     \newgeometry{
+     left=3cm,
+     right=3cm,
+     head=27.2pt,
+     top=3cm,
+     bottom=3cm}
+}
+
+%general information
+\author{$author$}
+\title{$title$}
+\date{$date$}
+
+% load at least
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black,
+    filecolor=black,
+    linkbordercolor=black,
+    menucolor=black,
+    linktoc=all]{hyperref}
+
+% end of PH
+%----------------------------------------------------------------------
+
+\begin{document}
+
+
+$include-before$
+
+$body$
+
+$include-after$
+
+\end{document}

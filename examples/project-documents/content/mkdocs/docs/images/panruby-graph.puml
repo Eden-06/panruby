@@ -1,0 +1,77 @@
+@startuml
+allow_mixing
+left to right direction
+rectangle Mkdocs #strategy
+rectangle Makefile #strategy
+rectangle DocWebsite #technology
+rectangle Panruby #application
+rectangle Latex #application
+rectangle Pandoc #application
+rectangle "Plantuml.jar" as plantuml #application
+rectangle Graphviz #application
+rectangle Inkscape #application
+rectangle "svg-to-pdf.lua" as svgpdflua #motivation
+rectangle "latex-crossrefs.lua" as latexcrossrefs #motivation
+
+rectangle Images {
+    rectangle "\*.puml" as PUML #implementation
+    rectangle Graphviz #white {
+        rectangle "\*.dot" as DOT #implementation
+        rectangle "\*.gv" as GV #implementation
+    }
+
+    rectangle "\*.svg" as SVG #business
+    rectangle "\*.png" as PNG #business
+    rectangle "\*.pdf" as imgpdf #business
+    PUML --> SVG
+    PUML --> PNG
+    DOT --> SVG
+    GV --> SVG
+    SVG --> imgpdf
+}
+rectangle Document {
+rectangle "\*.md.erb" as ERB #business
+rectangle "\*md" as MD #business
+rectangle "Markdownfiles" as mdfiles #implementation
+rectangle "\*.tex" as TEX #business
+rectangle "\*.pdf" as PDF #technology
+mdfiles --> ERB
+ERB --> MD
+MD --> TEX
+TEX --> PDF
+}
+
+Makefile ..> Images
+Makefile ..> Panruby
+Makefile ..> Pandoc
+Makefile ..> Latex
+Makefile ..> plantuml
+Makefile ..> Graphviz
+Makefile ..> Inkscape
+Mkdocs ..> mdfiles: Build
+mdfiles ..> DocWebsite
+Panruby ..> ERB
+Latex ..> TEX
+Pandoc ..> MD
+MD ..> svgpdflua: [alt](image.svg)
+svgpdflua ..> TEX: \includegraphics{image.pdf}
+MD ..> latexcrossrefs
+latexcrossrefs ..> TEX
+Graphviz ..> DOT
+Graphviz ..> GV
+
+plantuml ..> PUML
+Inkscape ..> SVG
+imgpdf --> TEX
+SVG ..> mdfiles: [alt](image.svg)
+
+legend
+| Color             | Definition              |
+| <#strategy>       | programs to use         |
+| <#application>    | programs                |
+| <#motivation>     | (Lua-) filter           |
+| <#implementation> | source files            |
+| <#business>       | temporary products      |
+| <#technology>     | final products          |
+endlegend
+@enduml

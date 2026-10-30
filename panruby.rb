@@ -15,9 +15,12 @@
 # encoding: UTF-8
 require 'erb'
 
+require 'set' # REVIEW ADD_CODE
+
 @variant=:latex
 @keys=Hash.new
 @extensions=%w[ markdown yaml_metadata_block grid_tables table_captions smart fenced_divs ]
+@current_file=nil # REVIEW ADD_CODE
 
 # Returns the set of used pandoc extensions
 def extensions
@@ -73,6 +76,9 @@ end
 
 # Loads another markdown file into this file.
 # If the file is an ERB file it will be proccessed by the ERB template engine.
+# ===================================================
+# REVIEW OLD_CODE LOAD FUNCTION
+# ===================================================
 def load(file)
 	r=''
   open(file) do|f|
@@ -85,7 +91,66 @@ def load(file)
 	end
   r
 end
+# ===================================================
+# REVIEW NEW_CODE LOAD FUNCTION
+# ===================================================
+# Explanation
+# ===================================================
+def load(file)
+  base = File.dirname(@current_file) # holds actual directory of 'current_file' (actual PROCESSED .erb)
+  full = File.expand_path(file, base) # converts relative path to absolute path of the CALLED file in load-command parameters
 
+  old = @current_file # save current PROCESSED .erb file
+
+  # set current_file to CALLED file in load-command parameters
+  # JUMP in address of called file
+  @current_file = full 
+
+  content = '' # FIXME split init and assign
+  begin
+    open(full) do |f|
+      if /.*[.]md[.]erb$/ =~ full  # check if the called file is .erb
+        engine=ERB.new(f.readlines.join, trim_mode: "<>") # Read and concat .erb and .md files
+        content=engine.result(binding)  # ruby code verarbeiten with result-call
+      else
+        content=f.read # below
+        # f.read liest ganzen dateiinhalt auf einmal und gibt einen einzigen string zurück
+        # f.readline.join liest datei zeilenweise in Array und verbindet arrayelemente zu string
+      end
+    end
+  ensure  # Damit wird @current_file auch dann zurückgesetzt, wenn beim Öffnen oder Auswerten einer Datei ein Fehler auftritt.
+    # JUMP BACK of currend (processed file (at the begin of the function call))
+    @current_file = old
+  end
+  content
+end
+# ===================================================
+# REVIEW END
+# ===================================================
+
+# ===================================================
+# REVIEW ADD_CODE FUNCTION: collect_load_paths
+# ===================================================
+def collect_load_paths(file, visited = Set.new)
+  return [] if visited.include?(file)
+  visited << file
+
+  content = open(file) { |f| f.readlines.join }
+  paths = content.scan(/load\(["']([^"']+)["']\)/).flatten
+
+  all = []
+
+  paths.each do |p|
+    full = File.expand_path(p, File.dirname(file))
+    all << full
+    all.concat(collect_load_paths(full, visited))
+  end
+
+  all
+end
+# ===================================================
+# REVIEW END
+# ===================================================
 
 # Start of execution
 
@@ -147,11 +212,23 @@ if File.exist?(output)
 	# exit
 end
 
+# ===================================================
+# REVIEW ADD_CODE
+# ===================================================
+all_md_files = collect_load_paths(file)
+all_md_files << File.expand_path(file)
+
+resource_dirs = all_md_files.map { |f| File.dirname(f) }.uniq
+# ===================================================
+# REVIEW EMD
+# ===================================================
+
 #parse file as erb template
 input=file
 if /.*[.]md[.]erb$/ =~ file
   puts "# process erb #"
   input=name+".tmp"
+  @current_file = File.expand_path(file) # REVIEW ADD_CODE - holds path for actual processed .erb
   open(file) do|f|
     engine=ERB.new(f.readlines.join, trim_mode: "<>")
     File.open(input,"w+") do|t|
@@ -162,12 +239,51 @@ end
 commandstring=String.new(@commandstring)
 commandstring=commandstring % [input,@extensions.join("+"),template,output]
 commandstring << " --bibliography=\"%s\" --biblatex"%bibfile if File.exist?(bibfile)
+
+# ===================================================
+# REVIEW ADD_CODE FILTERS
+# ===================================================
+# ad luafilter: svg-to-pdf
+lua_filter = File.join(Dir.pwd, "svg-to-pdf.lua")
+commandstring << " --lua-filter=\"#{lua_filter}\"" if File.exist?(lua_filter)
+
+# ad luafilter: convert md-links to LaTeX hyperref
+lua_filter_crossrefs = File.join(Dir.pwd, "latex-crossrefs.lua")
+commandstring << " --lua-filter=\"#{lua_filter_crossrefs}\"" if File.exist?(lua_filter_crossrefs)
+# ===================================================
+# REVIEW END
+# ===================================================
+
 variables=[]
 @keys.each_pair do|k,v|
  variables << " -V %s=\"%s\"" % [k,v]
 end
 
+# ===================================================
+# REVIEW ADD_CODE path-handling call
+# ===================================================
+# --- separate var for LaTeX graphicspath  ---
+latex_paths = resource_dirs.map { |p| "  {#{p}/}" }.join("\n")
+
+variables << " -V graphicspaths=\"#{latex_paths}\""
+# ===================================================
+# REVIEW END
+# ===================================================
+
 commandstring << (variables.join)
+
+# ===================================================
+# REVIEW ADD_CODE
+# ===================================================
+
+sep = File::PATH_SEPARATOR
+pandoc_resource_path = resource_dirs.join(sep)
+commandstring << " --resource-path=\"#{pandoc_resource_path}\""
+commandstring << " --listings --no-highlight"
+# ===================================================
+# REVIEW END
+# ===================================================
+
 puts "# generated commandstring #"
 puts commandstring
 

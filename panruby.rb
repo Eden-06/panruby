@@ -15,9 +15,20 @@
 # encoding: UTF-8
 require 'erb'
 
+require 'set'
+
 @variant=:latex
 @keys=Hash.new
 @extensions=%w[ markdown yaml_metadata_block grid_tables table_captions smart fenced_divs ]
+
+# path of file on which load was called
+@current_file_in_load_exec=nil
+
+# Set of paths of all load-function calls and main file
+@load_file_paths = Set.new #
+
+# Set as a Stack of all actual files in processing state
+@active_loads = Set.new    
 
 # Returns the set of used pandoc extensions
 def extensions
@@ -73,19 +84,55 @@ end
 
 # Loads another markdown file into this file.
 # If the file is an ERB file it will be proccessed by the ERB template engine.
+
 def load(file)
-	r=''
-  open(file) do|f|
-    if /.*[.]md[.]erb$/ =~ file
-	    engine=ERB.new(f.readlines.join, trim_mode: "<>")
-	    r=engine.result(binding)
-    else
-      r=f.read
+
+  # holds actual directory of 'current_file_in_load_exec' (currently PROCESSED.erb)
+  base = File.dirname(@current_file_in_load_exec)
+
+  # converts relative path to absolute path of the CALLED file in load-command
+  full = File.expand_path(file, base) 
+
+  # condition to avoid loop-imports (avoid endless loops)
+  raise "Circular load detected: #{full}" if @active_loads.include?(full)
+
+  # Add path to set of paths of all used .erb files
+  collect_load_path(full)
+
+  # Add path to set (stack) of files currently being PROCESSED
+  @active_loads << full
+
+  # saves current_file_in_load_exec for reset at the end of this function
+  old = @current_file_in_load_exec
+
+  # set ccurrent_file_in_load_exec to CALLED file in load-command parameters
+  @current_file_in_load_exec = full 
+
+  content = ''
+  begin
+    open(full) do |f|
+      if /.*[.]md[.]erb$/ =~ full  # check if the called file is .erb
+        # Read and concatenate .erb and .md files
+        engine=ERB.new(f.readlines.join, trim_mode: "<>")
+        # process ruby code
+        content=engine.result(binding)
+      else
+        content=f.read
+      end
     end
-	end
-  r
+  ensure
+    # Guarantees that current_file_in_load_exec and active_loads will be reset in case of errors
+    @current_file_in_load_exec = old
+    @active_loads.delete(full)
+  end
+  content #returns content
 end
 
+# Function to separate colletion of the paths in separate function
+def collect_load_path(path)
+  # Add path to set of file paths of read load-command
+  @load_file_paths << path
+end
 
 # Start of execution
 
@@ -147,11 +194,17 @@ if File.exist?(output)
 	# exit
 end
 
+# Add main *.md.erb file to sets 
+collect_load_path(file)
+@active_loads << File.expand_path(file)
+
 #parse file as erb template
 input=file
 if /.*[.]md[.]erb$/ =~ file
   puts "# process erb #"
   input=name+".tmp"
+  # holds path for actual processed .erb
+  @current_file_in_load_exec = File.expand_path(file)
   open(file) do|f|
     engine=ERB.new(f.readlines.join, trim_mode: "<>")
     File.open(input,"w+") do|t|
@@ -159,15 +212,32 @@ if /.*[.]md[.]erb$/ =~ file
     end
   end
 end
+
+@active_loads.delete(@current_file_in_load_exec)
+resource_dirs = @load_file_paths.map { |f| File.dirname(f) }.uniq
+
 commandstring=String.new(@commandstring)
 commandstring=commandstring % [input,@extensions.join("+"),template,output]
 commandstring << " --bibliography=\"%s\" --biblatex"%bibfile if File.exist?(bibfile)
+
 variables=[]
 @keys.each_pair do|k,v|
  variables << " -V %s=\"%s\"" % [k,v]
 end
 
+# --- separate var for LaTeX graphicspath  ---
+latex_paths = resource_dirs.map { |p| "  {#{p}/}" }.join("\n")
+
+variables << " -V graphicspaths=\"#{latex_paths}\""
+
 commandstring << (variables.join)
+
+# --- var for Pandoc resource paths  ---
+sep = File::PATH_SEPARATOR
+pandoc_resource_path = resource_dirs.join(sep)
+commandstring << " --resource-path=\"#{pandoc_resource_path}\""
+commandstring << " --listings --no-highlight"
+
 puts "# generated commandstring #"
 puts commandstring
 

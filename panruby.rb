@@ -220,14 +220,6 @@ commandstring=String.new(@commandstring)
 commandstring=commandstring % [input,@extensions.join("+"),template,output]
 commandstring << " --bibliography=\"%s\" --biblatex"%bibfile if File.exist?(bibfile)
 
-# ad luafilter: svg-to-pdf REVIEW
-lua_filter = File.join(Dir.pwd, "svg-to-pdf.lua")
-commandstring << " --lua-filter=\"#{lua_filter}\"" if File.exist?(lua_filter)
-
-# ad luafilter: convert md-links to LaTeX hyperref REVIEW
-lua_filter_crossrefs = File.join(Dir.pwd, "latex-crossrefs.lua")
-commandstring << " --lua-filter=\"#{lua_filter_crossrefs}\"" if File.exist?(lua_filter_crossrefs)
-
 variables=[]
 @keys.each_pair do|k,v|
  variables << " -V %s=\"%s\"" % [k,v]

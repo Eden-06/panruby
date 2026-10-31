@@ -1,17 +1,14 @@
 @startuml
 allow_mixing
 left to right direction
-rectangle Mkdocs #strategy
+
 rectangle Makefile #strategy
-rectangle DocWebsite #technology
 rectangle Panruby #application
 rectangle Latex #application
 rectangle Pandoc #application
 rectangle "Plantuml.jar" as plantuml #application
 rectangle Graphviz #application
 rectangle Inkscape #application
-rectangle "svg-to-pdf.lua" as svgpdflua #motivation
-rectangle "latex-crossrefs.lua" as latexcrossrefs #motivation
 
 rectangle Images {
     rectangle "\*.puml" as PUML #implementation
@@ -48,15 +45,9 @@ Makefile ..> Latex
 Makefile ..> plantuml
 Makefile ..> Graphviz
 Makefile ..> Inkscape
-Mkdocs ..> mdfiles: Build
-mdfiles ..> DocWebsite
 Panruby ..> ERB
 Latex ..> TEX
 Pandoc ..> MD
-MD ..> svgpdflua: [alt](image.svg)
-svgpdflua ..> TEX: \includegraphics{image.pdf}
-MD ..> latexcrossrefs
-latexcrossrefs ..> TEX
 Graphviz ..> DOT
 Graphviz ..> GV
 

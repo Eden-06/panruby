@@ -6,17 +6,13 @@
 
 
 # Artifacts
-VALID_ARGS := PH DOC
-
-## ARG=PH 
-PH-IMG=../content/pflichtenheft/images
-PH-MAIN=../content/pflichtenheft/pflichtenheft
+VALID_ARGS := DOC
 
 ## ARG=DOC
 DOC-MAIN=./../content/docs-as-pdf/docs
 #TEMPLATE
 DOC-TEMP=./tdocs.tex
-DOC-IMG=./../content/mkdocs/docs/images
+DOC-IMG=./../content/docs/images
 
 
 # General

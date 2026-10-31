@@ -9,7 +9,7 @@
 The current Panruby script only allows the use of absolute paths for the `load` command and images. This leads to the problem that the *workspaces* (directories containing Markdown, image, and ERB files, as well as Panruby) that the script works with are not robust against being moved. In other words, as soon as the *workspace* is run in a different environment (a different directory), the `load` commands and images no longer work.
 This makes it difficult to archive workspaces and to collaborate across multiple computers or with multiple people.
 
-#### Problem 2
+#### Issue 2
 
 The current Panruby script carries the risk of infinite loops. Suppose the main file `main.md.erb` contains a `load` for `A.md.erb`, and that file in turn contains a `load` for `main.md.erb`. This could result in an infinite loop when loading the content.
 
@@ -22,7 +22,7 @@ The goal is for a workspace to function as a root directory in different environ
 - All necessary programs (Ruby, Pandoc, LaTeX, etc.) must also be available in the new environment.
 - The structure within a workspace is preserved: Only the workspace as a whole is moved to other environments. The relative positions of all files and directories are preserved.
 
-## Goal 2
+### Goal 2
 
 We want to prevent `load` commands from entering infinite loops. At the same time, we want to allow files to be loaded multiple times without causing loops.
 

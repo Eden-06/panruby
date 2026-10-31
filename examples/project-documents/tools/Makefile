@@ -14,7 +14,8 @@ PH-MAIN=../content/pflichtenheft/pflichtenheft
 
 ## ARG=DOC
 DOC-MAIN=./../content/docs-as-pdf/docs
-DOC-TEMP=./tdocs.tex #TEMPLATE
+#TEMPLATE
+DOC-TEMP=./tdocs.tex
 DOC-IMG=./../content/mkdocs/docs/images
 
 

@@ -21,6 +21,8 @@ require 'set' # REVIEW ADD_CODE
 @keys=Hash.new
 @extensions=%w[ markdown yaml_metadata_block grid_tables table_captions smart fenced_divs ]
 @current_file=nil # REVIEW ADD_CODE
+@load_file_paths = Set.new # Set of paths of all load-function calls and main file
+@active_loads = Set.new
 
 # Returns the set of used pandoc extensions
 def extensions
@@ -79,18 +81,18 @@ end
 # ===================================================
 # REVIEW OLD_CODE LOAD FUNCTION
 # ===================================================
-def load(file)
-	r=''
-  open(file) do|f|
-    if /.*[.]md[.]erb$/ =~ file
-	    engine=ERB.new(f.readlines.join, trim_mode: "<>")
-	    r=engine.result(binding)
-    else
-      r=f.read
-    end
-	end
-  r
-end
+#def load(file)
+#	r=''
+#  open(file) do|f|
+#    if /.*[.]md[.]erb$/ =~ file
+#	    engine=ERB.new(f.readlines.join, trim_mode: "<>")
+#	    r=engine.result(binding)
+#    else
+#      r=f.read
+#    end
+#	end
+#  r
+#end
 # ===================================================
 # REVIEW NEW_CODE LOAD FUNCTION
 # ===================================================
@@ -100,13 +102,18 @@ def load(file)
   base = File.dirname(@current_file) # holds actual directory of 'current_file' (actual PROCESSED .erb)
   full = File.expand_path(file, base) # converts relative path to absolute path of the CALLED file in load-command parameters
 
+  raise "Circular load detected: #{full}" if @active_loads.include?(full)
+  # Add path to set of file paths of read load-command
+  collect_load_path(full)
+  @active_loads << full
+
   old = @current_file # save current PROCESSED .erb file
 
   # set current_file to CALLED file in load-command parameters
   # JUMP in address of called file
   @current_file = full 
 
-  content = '' # FIXME split init and assign
+  content = ''
   begin
     open(full) do |f|
       if /.*[.]md[.]erb$/ =~ full  # check if the called file is .erb
@@ -121,6 +128,7 @@ def load(file)
   ensure  # Damit wird @current_file auch dann zurückgesetzt, wenn beim Öffnen oder Auswerten einer Datei ein Fehler auftritt.
     # JUMP BACK of currend (processed file (at the begin of the function call))
     @current_file = old
+    @active_loads.delete(full)
   end
   content
 end
@@ -131,22 +139,9 @@ end
 # ===================================================
 # REVIEW ADD_CODE FUNCTION: collect_load_paths
 # ===================================================
-def collect_load_paths(file, visited = Set.new)
-  return [] if visited.include?(file)
-  visited << file
-
-  content = open(file) { |f| f.readlines.join }
-  paths = content.scan(/load\(["']([^"']+)["']\)/).flatten
-
-  all = []
-
-  paths.each do |p|
-    full = File.expand_path(p, File.dirname(file))
-    all << full
-    all.concat(collect_load_paths(full, visited))
-  end
-
-  all
+def collect_load_path(path)
+  # Add path to set of file paths of read load-command
+  @load_file_paths << path
 end
 # ===================================================
 # REVIEW END
@@ -215,10 +210,10 @@ end
 # ===================================================
 # REVIEW ADD_CODE
 # ===================================================
-all_md_files = collect_load_paths(file)
-all_md_files << File.expand_path(file)
+collect_load_path(file)
+@active_loads << File.expand_path(file)
 
-resource_dirs = all_md_files.map { |f| File.dirname(f) }.uniq
+
 # ===================================================
 # REVIEW EMD
 # ===================================================
@@ -236,6 +231,10 @@ if /.*[.]md[.]erb$/ =~ file
     end
   end
 end
+
+@active_loads.delete(@current_file)
+resource_dirs = @load_file_paths.map { |f| File.dirname(f) }.uniq
+
 commandstring=String.new(@commandstring)
 commandstring=commandstring % [input,@extensions.join("+"),template,output]
 commandstring << " --bibliography=\"%s\" --biblatex"%bibfile if File.exist?(bibfile)
